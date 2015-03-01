@@ -139,10 +139,13 @@ namespace RedDog.Search.Portal.Controllers
             }
 
             // Populate.
-            var result = await _managementClient.PopulateAsync(indexName, operations.ToArray());
-            if (!result.IsSuccess)
-                return Request.CreateResponse(result.StatusCode, result);
-            return Request.CreateResponse(HttpStatusCode.OK, result);
+            var results = await _managementClient.PopulateBatchAsync(indexName, operations.ToArray());
+            foreach (var result in results)
+            {
+                if (!result.IsSuccess)
+                    return Request.CreateResponse(result.StatusCode, result);
+            }
+            return Request.CreateResponse(HttpStatusCode.OK, results);
         }
     }
 }
